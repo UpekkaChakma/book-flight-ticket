@@ -108,7 +108,7 @@
     </section>
      <!--bonus section-->
      <div id="displayPayment2" class="green-box">
-        <h2>Your payment is successful ✓</h2>
+        <h2>Your payment was successful ✓</h2>
      </div>
     
     <!--Thank You-->
@@ -121,18 +121,15 @@
             if (isIncrease == true) {
                 ticketNewCount = ticketNewCount + 1;
             }
-            if (isIncrease == false && ticketCount > 0) {
+            if (isIncrease == false && ticketCount > 1) {
                 ticketNewCount = ticketNewCount - 1;
             }
             ticketInput.value = ticketNewCount; 
             calculateTotal();
         }
         function calculateTotal() {
-            const firstClassInput = document.getElementById('firstClass-count');
-            const firstClassCount = parseInt(firstClassInput.value);
-
-            const economyInput = document.getElementById('economy-count');
-            const economyCount = parseInt(economyInput.value);
+            const firstClassCount = getInputValue('firstClass-count');
+            const economyCount = getInputValue('economy-count');
             const subtotal = firstClassCount * 150 + economyCount * 100;
             document.getElementById('subtotal').innerText = '$' + subtotal;
             const tax = subtotal * .1;
@@ -145,6 +142,11 @@
             doNotDisplay.style.display = "none";
             const DisplayIt = document.getElementById('displayPayment2');
             DisplayIt.style.display = "block";
+        }
+        function getInputValue(ticket) {
+            const ticketInput = document.getElementById(ticket);
+            const ticketCount = parseInt(ticketInput.value);
+            return ticketCount;    
         }
     
     </script>
