@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Booking</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!--Header and Menu Section-->
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a class="active" href="#" style="margin-right: 32px">Sign Up</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!--Booking Section-->
+
+    <section class="container">
+        <form id="form" class="booking-form">
+            <h5 class="text-center">Booking Flights</h5>
+            <div class="input">
+                <label for="from">Flying From</label>
+                <input type="text" name="from" id="journey-from" placeholder="Dhaka, Bangladesh" required>
+            </div>
+
+            <div class="input">
+                <label for="to">Flying To</label>
+                <input type="text" name="to" id="journey-to" placeholder="New York, United States" required>
+            </div>
+
+            <div class="input-group">
+                <div class="input">
+                    <label for="departure-date">Departure</label>
+                    <input type="date" id="departure-date" name="departure-date" class="date" required>
+                </div>
+                <div class="input">
+                    <label for="return-date">Return</label>
+                    <input type="date" id="return-date" name="return-date" class="date" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div class="input">
+                    <label for="first-class">First Class ($150)</label>
+                    <div class="ticketCount-container">
+                        <input id="firstClass-count" readonly name="first-class" class="text-center" type="number"
+                            value="0" placeholder="Enter a number" />
+                        <div class="plus-minus-btn minus" onclick="decreaseCount('firstClass')">
+                            <button type="button">-</button>
+                        </div>
+                        <div class="plus-minus-btn plus" onclick="increaseCount('firstClass')">
+                            <button type="button">+</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="input">
+                    <label for="economy-class">Economy ($100)</label>
+                    <div class="ticketCount-container">
+                        <input id="economyClass-count" readonly name="economy-class" class="text-center" type="number"
+                            value="0" placeholder="Enter a number" />
+                        <div class="plus-minus-btn minus" onclick="decreaseCount('economyClass')">
+                            <button type="button">-</button>
+                        </div>
+                        <div class="plus-minus-btn plus" onclick="increaseCount('economyClass')">
+                            <button type="button">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="calculations">
+                <div class="amount">
+                    <p>Subtotal</p>
+                    <p id="subtotal">$00</p>
+                </div>
+
+                <div class="amount">
+                    <p>Charge 10% VAT</p>
+                    <p id="tax">$00</p>
+                </div>
+                <hr>
+                <div class="amount mt-6">
+                    <h4>Total</h4>
+                    <h4 id="total">$00</h4>
+                </div>
+            </div>
+            <button type="submit" class="btn-style">Book Now</button>
+        </form>
+
+        <div class="booking-content">
+            <h1>discover <br> around the world</h1>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicingelit. Provident voluptatibus quam fuga laborumalias
+                veniam libero autem quasi maxime ullam vero nama imi dolor, architecto ab facilis eaque deserunt nobise
+                voluptatibus quam</p>
+        </div>
+    </section>
+    <!--bonus section-->
+    <section id="popup-container" onclick="hidePaymentCard()">
+        <div id="popup-box">
+            <div class="flex-center">
+                <h2 id="check">✓</h2>
+                <h4>Payment successful</h4>
+            </div>
+            <div class="grid">
+                <div class="flex-center">
+                    <div class="flex mb-6">
+                        <h2>✈</h2>
+                        <h6 class="popup-flight-date"></h6>
+                    </div>
+                    <h5 class="popup-place-from"></h5>
+                    <h4>⇩</h4>
+                    <h5 class="popup-place-to"></h5>
+                </div>
+                <div class="flex-center">
+                    <div class="flex mb-6">
+                        <h2>✈</h2>
+                        <h6 class="popup-return-date"></h6>
+                    </div>
+                    <h5 class="popup-place-to"></h5>
+                    <h4>⇩</h4>
+                    <h5 class="popup-place-from"></h5>
+                </div>
+                <div class="flex-center">
+                    <h4 class="popup-ticket-qty"></h4>
+                    <h6 class="popup-ticket-text"></h6>
+                </div>
+                <div class="flex-center">
+                    <h4 id="popup-total"></h4>
+                    <h6>total cost</h6>
+                </div>
+            </div>
+            <button class="btn-style" onclick="hidePaymentCard()">OK</button>
+        </div>
+    </section>
+
+    <!--Thank You-->
+
+    <script>
+        const total = document.getElementById('total');
+        const journeyFrom = document.getElementById('journey-from');
+        const journeyTo = document.getElementById('journey-to');
+        const departureDate = document.getElementById('departure-date');
+        const returnDate = document.getElementById('return-date');
+        const firstClassCount = document.getElementById('firstClass-count');
+        const economyClassCount = document.getElementById('economyClass-count');
+        const increaseCountBtn = document.querySelector('.plus');
+        const decreaseCountBtn = document.querySelector('.minus');
+
+
+        // increase ticket count
+        function increaseCount(name) {
+            const target = findTargetByName(name);
+            target.value = Number(target.value) + 1;
+            calculateTotal();
+        }
+
+        //decrease ticket count
+        function decreaseCount(name) {
+            const target = findTargetByName(name);
+            if (target.value > 1) {
+                target.value = target.value - 1;
+                calculateTotal();
+            }
+        }
+
+        // helper functions
+        function findTargetByName(name) {
+            let target;
+            name == 'firstClass' ? target = firstClassCount : target = economyClassCount;
+            return target
+        }
+        function calculateTotal() {
+            const subTotal = firstClassCount.value * 150 + economyClassCount.value * 100;
+            document.getElementById('subtotal').innerText = '$' + subTotal;
+            document.getElementById('tax').innerText = '$' + subTotal * .1;
+            total.innerText = '$' + (subTotal + subTotal * .1);
+        }
+
+        // popup box calculations
+        function calculatePopUpBox() {
+            document.querySelectorAll('.popup-place-to').forEach(place => {
+                place.innerHTML = journeyTo.value;
+            });
+            document.querySelectorAll('.popup-place-from').forEach(place => {
+                place.innerHTML = journeyFrom.value;
+            });
+            document.querySelector('.popup-flight-date').innerHTML = new Date(departureDate.value).toDateString();
+            document.querySelector('.popup-return-date').innerHTML = new Date(returnDate.value).toDateString();
+            document.querySelector('#popup-total').innerHTML = total.innerText;
+            const ticketQty = Number(firstClassCount.value) + Number(economyClassCount.value);
+            document.querySelector('.popup-ticket-qty').innerHTML = ticketQty <= 9 ? '0' + ticketQty : ticketQty;
+            document.querySelector('.popup-ticket-text').innerHTML = ticketQty == 1 ? 'ticket' : 'tickets';
+
+        }
+
+
+
+        // strict user from selecting past date
+        const today = new Date().toISOString().split('T')[0];
+        document.querySelectorAll('.date').forEach(dateInput => {
+            dateInput.setAttribute('min', today)
+        })
+
+        //  show payment card / popup
+        const form = document.querySelector("#form");
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const container = document.getElementById('popup-container');
+            // document.getElementById('total-price').innerText = total.innerText;
+
+            const currentTime = new Date().getTime() - 70000000;
+            const flightTime = new Date(departureDate.value).getTime();
+            const comeBackTime = new Date(returnDate.value).getTime();
+
+            // different use case/condition checking
+            if (flightTime > comeBackTime) {
+                alert('Return date can not be lower than departure date');
+                return
+            }
+            if (firstClassCount.value <= 0 && economyClassCount.value <= 0) {
+                alert('Choose at least one ticket');
+                return
+            };
+
+            if (container.classList.contains('active')) {
+                container.classList.remove('active')
+            } else {
+                container.classList.add('active')
+            }
+            calculatePopUpBox()
+        });
+
+
+        // hide payment card
+        function hidePaymentCard() {
+            const container = document.getElementById('popup-container');
+            container.classList.remove('active')
+        }
+
+
+    </script>
+
+</body>
+
+</html>
